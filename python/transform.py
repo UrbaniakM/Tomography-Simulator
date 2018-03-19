@@ -21,20 +21,10 @@ def radon_transform(image, n_detectors, structure_range, dalpha):
         sinogram.append([])
         lines.append([])
         x, y = calculate_position_on_circle(circle_center_x, circle_center_y, R, alpha)
-        detectors = []
-        if n_detectors%2 != 0:
-            beta = alpha + 180.
-            detector = calculate_position_on_circle(circle_center_x, circle_center_y, R, beta)
-            detectors.append(detector)
-        i_range = floor(n_detectors / 2)
-        for i in range(-i_range, i_range+1):
-            if i == 0:
-                continue;
-            beta = alpha + 180. + structure_range / i
-            detector = calculate_position_on_circle(circle_center_x, circle_center_y, R, beta)
-            detectors.append(detector)
-        for i in range(len(detectors)):
-            bresenham_line = line(x, y, detectors[i][0], detectors[i][1])
+        for i in range(n_detectors):
+            beta = alpha + 180 - structure_range/2 + i * (structure_range / (n_detectors - 1) )
+            detector_x, detector_y = calculate_position_on_circle(circle_center_x, circle_center_y, R, beta)
+            bresenham_line = line(x, y, detector_x, detector_y)
             lines[-1].append(bresenham_line)
             val = np.float(0)
             num = 0
@@ -49,7 +39,7 @@ def radon_transform(image, n_detectors, structure_range, dalpha):
 
     return sinogram, lines
 
-def recreateImage(sinogram, lines, img_size_x, img_size_y):
+def recreate_image(sinogram, lines, img_size_x, img_size_y):
     image = np.zeros([img_size_x, img_size_y])
     sinogram_size_x, sinogram_size_y = np.shape(sinogram)
     for x in range(sinogram_size_x):

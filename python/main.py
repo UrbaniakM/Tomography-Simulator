@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 from skimage.io import imread
 from skimage import data_dir
 from skimage.transform import radon, iradon
-from transform import radon_transform, recreateImage
+from transform import radon_transform, recreate_image
 
 image = imread(data_dir + "/phantom.png", as_grey=True)
 
-fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(16, 4.5))
+fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(1, 5, figsize=(16, 4.5))
 
 ax1.set_title("Original")
 ax1.imshow(image, cmap=plt.cm.Greys_r)
@@ -32,9 +32,9 @@ sinogram_mine, lines = radon_transform(image, 50, 90, 3)
 ax4.set_title("My sinogram")
 ax4.imshow(sinogram_mine, cmap=plt.cm.Greys_r, aspect='auto')
 
-reconstructed_img = recreateImage(sinogram_mine, lines, np.shape(image)[0], np.shape(image)[1])
-ax4.set_title("My sinogram")
-ax4.imshow(reconstructed_img, cmap=plt.cm.Greys_r, aspect='auto')
+reconstructed_img = recreate_image(sinogram_mine, lines, np.shape(image)[0], np.shape(image)[1])
+ax5.set_title("Reconstructed")
+ax5.imshow(reconstructed_img, cmap=plt.cm.Greys_r, aspect='auto')
 
 fig.tight_layout()
 plt.show()

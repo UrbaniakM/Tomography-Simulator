@@ -45,5 +45,4 @@ def line(x0, y0, x1, y1):
             else:
                 d += delta_A
                 y += inc_y
-
     return line_list

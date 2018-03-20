@@ -20,6 +20,7 @@ public class LoadImage extends VBox {
     final private FileChooser fileChooser = new FileChooser();
     final private Button loadFileButton = new Button("Select file");
     final private Label label = new Label("Input image");
+    private static BufferedImage bufferedImage;
 
     public LoadImage(Stage stage){
         super(8);
@@ -36,6 +37,8 @@ public class LoadImage extends VBox {
             if(file != null){
                 try {
                     BufferedImage bufferedImage = ImageIO.read(file);
+                    this.bufferedImage = bufferedImage;
+                    TransformImage.bufferedImage = bufferedImage;
                     Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                     imageView.setImage(image);
                 } catch (IOException ex){

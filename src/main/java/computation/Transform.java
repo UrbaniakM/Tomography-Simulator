@@ -102,8 +102,8 @@ public class Transform {
     }
 
     public BufferedImage generateSinogram(){ // TODO
-        int sinogramHeight = 180 / deltaAlpha;
-        int sinogramWidth = numberOfDetectors;
+        int sinogramHeight = numberOfDetectors;
+        int sinogramWidth = 180 / deltaAlpha;
         sinogram = new BufferedImage(sinogramHeight, sinogramWidth, BufferedImage.TYPE_BYTE_GRAY);
         int maxVal = 1024;
         for(int alpha = 0; alpha < 180; alpha += deltaAlpha){
@@ -126,10 +126,9 @@ public class Transform {
                 //}
                 if(val < maxVal)
                     maxVal = val;
-                sinogram.setRGB(alpha/deltaAlpha, iter, val);
+                sinogram.setRGB(iter,alpha/deltaAlpha, val);
             }
         }
-        System.out.println(maxVal);
         return sinogram;
     }
 

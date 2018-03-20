@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -20,9 +21,8 @@ public class LoadImage extends VBox {
     final private FileChooser fileChooser = new FileChooser();
     final private Button loadFileButton = new Button("Select file");
     final private Label label = new Label("Input image");
-    private static BufferedImage bufferedImage;
 
-    public LoadImage(Stage stage){
+    public LoadImage(Stage stage, Main main){
         super(8);
         fileChooser.setTitle("Select image to process");
         getChildren().addAll(label, imageView, loadFileButton);
@@ -37,12 +37,11 @@ public class LoadImage extends VBox {
             if(file != null){
                 try {
                     BufferedImage bufferedImage = ImageIO.read(file);
-                    this.bufferedImage = bufferedImage;
-                    TransformImage.bufferedImage = bufferedImage;
+                    main.setProcessedImage(bufferedImage);
                     Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                     imageView.setImage(image);
                 } catch (IOException ex){
-
+                    // TODO: wrong input file alert
                 }
             }
         });

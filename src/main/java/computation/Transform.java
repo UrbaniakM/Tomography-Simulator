@@ -55,7 +55,6 @@ public class Transform {
         int incY = sign(dy);
         dx = Math.abs(dx);
         dy = Math.abs(dy);
-
         if(dx >= dy) {
             int d = 2 * dy - dx;
             int deltaA = 2 * dy;
@@ -106,14 +105,13 @@ public class Transform {
         int sinogramHeight = 180 / deltaAlpha;
         int sinogramWidth = numberOfDetectors;
         sinogram = new BufferedImage(sinogramHeight, sinogramWidth, BufferedImage.TYPE_BYTE_GRAY);
-
+        int maxVal = 1024;
         for(int alpha = 0; alpha < 180; alpha += deltaAlpha){
             Point emiter = calculatePositionOnCircle(alpha);
             for(int iter = 0; iter < numberOfDetectors; iter++){
                 int beta = alpha + 180 - structureRange/2 + iter * (structureRange / (numberOfDetectors - 1));
                 Point detector = calculatePositionOnCircle(beta);
                 ArrayList<Point> line = bresenhamLine(emiter, detector);
-
                 int val = 0;
                 int num = 0;
                 for(Point currentPoint: line){
@@ -123,13 +121,15 @@ public class Transform {
                         num++;
                     }
                 }
-                if(num > 0){
-                    val /= num;
-                }
+                //if(num > 0){
+                //    val /= num;
+                //}
+                if(val < maxVal)
+                    maxVal = val;
                 sinogram.setRGB(alpha/deltaAlpha, iter, val);
             }
         }
-
+        System.out.println(maxVal);
         return sinogram;
     }
 

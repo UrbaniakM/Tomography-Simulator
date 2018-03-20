@@ -24,7 +24,7 @@ public class TransformImage extends HBox{
     final private Button recreatedButton = new Button("Recreate image");
 
 
-    public static BufferedImage bufferedImage = null;
+    private BufferedImage bufferedImage = null;
     private BufferedImage sinogram = null;
     private BufferedImage reconstructedImage;
     private Transform transform = new Transform();
@@ -57,7 +57,7 @@ public class TransformImage extends HBox{
 
     public void generateSinogram(){
         if(bufferedImage == null){
-            throw new NullPointerException("No image to process");
+            throw new NullPointerException("No image to process"); // TODO: alert
         }
         sinogram = transform.generateSinogram();
         Image image = SwingFXUtils.toFXImage(sinogram, null);

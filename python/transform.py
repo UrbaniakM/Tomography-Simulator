@@ -16,9 +16,9 @@ def radon_transform(image, n_detectors, structure_range, dalpha):
     circle_center_x /= 2
     alpha = 0
     sinogram = []
+    sinogram = np.zeros([n_detectors,int(180/dalpha),])
     lines = []
-    while alpha <= 360:
-        sinogram.append([])
+    while alpha < 180:
         lines.append([])
         x, y = calculate_position_on_circle(circle_center_x, circle_center_y, R, alpha)
         for i in range(n_detectors):
@@ -34,7 +34,7 @@ def radon_transform(image, n_detectors, structure_range, dalpha):
                     num += 1
             if num > 0:
                 val /= num
-            sinogram[-1].append(val)
+            sinogram[i,int(alpha/dalpha),] = val
         alpha += dalpha
 
     return sinogram, lines
@@ -44,7 +44,7 @@ def recreate_image(sinogram, lines, img_size_x, img_size_y):
     sinogram_size_x, sinogram_size_y = np.shape(sinogram)
     for x in range(sinogram_size_x):
         for y in range(sinogram_size_y):
-            line = lines[x][y]
+            line = lines[y][x]
             for line_x, line_y in line:
                 if line_x < img_size_x and line_y < img_size_y:
                     image[line_x][line_y] += sinogram[x][y]

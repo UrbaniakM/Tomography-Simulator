@@ -28,7 +28,7 @@ ax3.set_title("Reconstruction\nFiltered back projection")
 ax3.imshow(reconstruction_fbp, cmap=plt.cm.Greys_r)
 
 
-sinogram_mine, lines = radon_transform(image, 50, 90, 3)
+sinogram_mine, lines = radon_transform(image, 400, 180, 2)
 ax4.set_title("My sinogram")
 ax4.imshow(sinogram_mine, cmap=plt.cm.Greys_r, aspect='auto')
 

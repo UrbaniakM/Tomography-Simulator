@@ -44,6 +44,7 @@ public class TransformImage extends HBox{
     final private ChoiceBox choiceBox = new ChoiceBox(FXCollections.observableArrayList(
             "Final image", "Iteratively (animation)")
     );
+    final private Label meanSquareErrorLabel = new Label("Mean square error value: ");
 
 
     private BufferedImage bufferedImage = null;
@@ -64,7 +65,7 @@ public class TransformImage extends HBox{
         recreatedLayout.setAlignment(Pos.TOP_CENTER);
 
         sinogramLayout.getChildren().addAll(sinogramLabel, sinogramView, sinogramButton, slidersPane);
-        recreatedLayout.getChildren().addAll(recreatedLabel, recreatedView, recreatedButton, choiceBox);
+        recreatedLayout.getChildren().addAll(recreatedLabel, recreatedView, recreatedButton, choiceBox, meanSquareErrorLabel);
 
         sinogramButton.setOnMouseClicked(event -> {
             generateSinogram();
@@ -137,5 +138,7 @@ public class TransformImage extends HBox{
         reconstructedImage = transform.reconstructImage();
         Image image = SwingFXUtils.toFXImage(reconstructedImage, null);
         recreatedView.setImage(image);
+        Double meanSquareError = transform.meanSquareError();
+        meanSquareErrorLabel.setText("Mean square error value: " + meanSquareError.toString());
     }
 }

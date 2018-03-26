@@ -36,7 +36,9 @@ public class LoadImage extends VBox {
             File file = fileChooser.showOpenDialog(stage);
             if(file != null){
                 try {
-                    BufferedImage bufferedImage = ImageIO.read(file);
+                    BufferedImage inputImage = ImageIO.read(file);
+                    BufferedImage bufferedImage = new BufferedImage(inputImage.getWidth(), inputImage.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+                    bufferedImage.getGraphics().drawImage(inputImage, 0, 0, null);
                     main.setProcessedImage(bufferedImage);
                     Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                     imageView.setImage(image);

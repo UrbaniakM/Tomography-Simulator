@@ -1,6 +1,5 @@
 package computation;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class Transform {
         this.structureRange = structureRange;
     }
 
-    private Point calculatePositionOnCircle(float degree) {
+    private Point calculatePositionOnCircle(double degree) {
         int x = Math.toIntExact(Math.round(size/2 + radius * Math.cos(Math.toRadians(degree))));
         int y = Math.toIntExact(Math.round(size/2 + radius * Math.sin(Math.toRadians(degree))));
         return new Point(x,y);
@@ -110,11 +109,19 @@ public class Transform {
 
     public double meanSquareError(){
         meanSquareError = 0;
-        // TODO
+        Raster inputImage = image.getRaster();
+        Raster reconstructedImage = reconstructed.getRaster();
+        for(int x = 0; x < xMax; x++){
+            for(int y = 0; y < yMax; y++){
+                meanSquareError += Math.pow(inputImage.getSample(x,y,0) - reconstructedImage.getSample(x,y,0),2);
+            }
+        }
+        meanSquareError /= xMax * yMax;
+        meanSquareError = Math.round(meanSquareError * 100.0) / 100.0;
         return meanSquareError;
     }
 
-    public BufferedImage generateSinogram(){ // TODO
+    public BufferedImage generateSinogram(){
         int sinogramHeight = numberOfDetectors;
         int sinogramWidth = (int)Math.ceil(360 / deltaAlpha)+1;
         sinogram = new BufferedImage(sinogramHeight, sinogramWidth, BufferedImage.TYPE_BYTE_GRAY);
@@ -125,18 +132,18 @@ public class Transform {
             Point emiter = calculatePositionOnCircle(alpha);
             ArrayList<Double> valuesArray = new ArrayList<>();
             for(int detector = 0; detector < numberOfDetectors; detector++){
-                float beta = alpha + 180 - structureRange/2 + detector * (structureRange / (numberOfDetectors - 1));
+                double beta = alpha + 180 - structureRange/2 + detector * (structureRange / (numberOfDetectors - 1));
                 Point detectorPoint = calculatePositionOnCircle(beta);
                 ArrayList<Point> line = bresenhamLine(emiter, detectorPoint);
                 lines[detector][rayNum] = new ArrayList<>();
                 lines[detector][rayNum] = line;
                 double val = 0;
                 int num = 0;
-                //double weight = Math.max(Math.sin(Math.toRadians(alpha%90)),Math.cos(Math.toRadians(alpha%90)));
+                double weight = Math.max(Math.sin(Math.toRadians(beta%90)),Math.cos(Math.toRadians(beta%90)));
                 for(Point currentPoint: line){
                     if(currentPoint.x < xMax && currentPoint.y < yMax){
                         double currentVal = imageData.getSample(currentPoint.x, currentPoint.y, 0);
-                        //currentVal *= 1/weight;
+                        currentVal *= 1/weight;
                         val += currentVal;
                         num++;
                     }
@@ -165,6 +172,7 @@ public class Transform {
         int sinWidth = sinogram.getWidth();
         int sinHeight = sinogram.getHeight();
         double[][] values = new double[xMax][yMax];
+        double[][] occurences = new double[xMax][yMax];
         for(int ray = 0; ray < sinHeight; ray++){
             for(int detector = 0; detector < sinWidth; detector++){
                 int value = sinogram.getData().getSample(detector,ray,0);
@@ -172,6 +180,7 @@ public class Transform {
                 for(Point point: line){
                     if(point.x < xMax && point.y < yMax){
                         values[point.x][point.y] += value;
+                        occurences[point.x][point.y]++;
                     }
                 }
             }
@@ -187,6 +196,7 @@ public class Transform {
         for(int x = 0; x < xMax; x++){
             for(int y = 0; y < yMax; y++){
                 values[x][y] /= maxValue;
+                //values[x][y] /= occurences[x][y];
                 double[] valWrite = new double[1];
                 valWrite[0] = values[x][y] * 255;
                 reconstructed.getRaster().setPixel(x,y,valWrite);

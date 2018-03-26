@@ -2,7 +2,9 @@ package computation;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Transform {
     private BufferedImage image = null;
@@ -18,7 +20,7 @@ public class Transform {
     private int xMax;
     private int yMax;
 
-    private ArrayList<ArrayList<Point>> lines;
+    private ArrayList<Point>[][] lines;
 
     private double meanSquareError;
 
@@ -116,32 +118,42 @@ public class Transform {
         int sinogramHeight = numberOfDetectors;
         int sinogramWidth = (int)Math.ceil(360 / deltaAlpha)+1;
         sinogram = new BufferedImage(sinogramHeight, sinogramWidth, BufferedImage.TYPE_BYTE_GRAY);
-        lines = new ArrayList<>();
+        Raster imageData = image.getData();
+        lines = new ArrayList[sinogramHeight][sinogramWidth];
         int rayNum = 0;
         for(int alpha = 0; alpha <= 360; alpha += deltaAlpha){
             Point emiter = calculatePositionOnCircle(alpha);
+            ArrayList<Double> valuesArray = new ArrayList<>();
             for(int detector = 0; detector < numberOfDetectors; detector++){
                 float beta = alpha + 180 - structureRange/2 + detector * (structureRange / (numberOfDetectors - 1));
                 Point detectorPoint = calculatePositionOnCircle(beta);
                 ArrayList<Point> line = bresenhamLine(emiter, detectorPoint);
-                lines.add(line);
+                lines[detector][rayNum] = new ArrayList<>();
+                lines[detector][rayNum] = line;
                 double val = 0;
                 int num = 0;
-                double weight = Math.max(Math.sin(Math.toRadians(alpha%90)),Math.cos(Math.toRadians(alpha%90)));
+                //double weight = Math.max(Math.sin(Math.toRadians(alpha%90)),Math.cos(Math.toRadians(alpha%90)));
                 for(Point currentPoint: line){
                     if(currentPoint.x < xMax && currentPoint.y < yMax){
-                        //Color color = new Color(image.getRGB(currentPoint.x, currentPoint.y));
-                        //val += (color.getRed() + color.getGreen() + color.getBlue());// / 3;
-                        double currentVal = image.getRGB(currentPoint.x, currentPoint.y)& 0xFF;
-                        currentVal *= 1/weight;
+                        double currentVal = imageData.getSample(currentPoint.x, currentPoint.y, 0);
+                        //currentVal *= 1/weight;
                         val += currentVal;
                         num++;
                     }
                 }
+                valuesArray.add(val);
                 if(num > 0){
-                    //val /= num;
+                    val /= num;
                 }
-                sinogram.setRGB(detector,rayNum, Math.toIntExact(Math.round(val)));
+                int[] valWrite = new int[1];
+                valWrite[0] = Math.toIntExact(Math.round(val));
+                sinogram.getRaster().setPixel(detector,rayNum,valWrite);
+            }
+            double maxValue = Collections.max(valuesArray);
+            for(int detector = 0; detector < valuesArray.size(); detector++){
+                int[] valWrite = new int[1];
+                valWrite[0] = (int)(valuesArray.get(detector)/maxValue*255);
+                sinogram.getRaster().setPixel(detector,rayNum,valWrite);
             }
             rayNum++;
         }
@@ -152,22 +164,34 @@ public class Transform {
         reconstructed = new BufferedImage(xMax, yMax, BufferedImage.TYPE_BYTE_GRAY);
         int sinWidth = sinogram.getWidth();
         int sinHeight = sinogram.getHeight();
-        for(int x = 0; x < sinWidth; x++){
-            for(int y = 0; y < sinHeight; y++){
-                ArrayList<Point> line = lines.get(x + y);
+        double[][] values = new double[xMax][yMax];
+        for(int ray = 0; ray < sinHeight; ray++){
+            for(int detector = 0; detector < sinWidth; detector++){
+                int value = sinogram.getData().getSample(detector,ray,0);
+                ArrayList<Point> line = lines[detector][ray];
                 for(Point point: line){
                     if(point.x < xMax && point.y < yMax){
-                        //Color color = new Color(reconstructed.getRGB(point.x, point.y));
-                        //int val = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
-                        //Color colorSinog = new Color(sinogram.getRGB(x,y));
-                        //val += (colorSinog.getRed() + colorSinog.getGreen() + colorSinog.getBlue()) / 3;
-                        int val = reconstructed.getRGB(point.x,point.y) + sinogram.getRGB(x,y);
-                        reconstructed.setRGB(x, y, val);
+                        values[point.x][point.y] += value;
                     }
                 }
             }
         }
-
+        double maxValue = 0;
+        for(int x = 0; x < xMax; x++){
+            for(int y = 0; y < yMax; y++){
+                if(values[x][y] > maxValue) {
+                    maxValue = values[x][y];
+                }
+            }
+        }
+        for(int x = 0; x < xMax; x++){
+            for(int y = 0; y < yMax; y++){
+                values[x][y] /= maxValue;
+                double[] valWrite = new double[1];
+                valWrite[0] = values[x][y] * 255;
+                reconstructed.getRaster().setPixel(x,y,valWrite);
+            }
+        }
         return reconstructed;
     }
 

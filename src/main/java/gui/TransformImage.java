@@ -10,7 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -91,6 +90,10 @@ public class TransformImage extends HBox{
             transform.setDeltaAlpha(intValue);
             deltaAlphaValue.setText(intValue.toString());
         });
+
+        angleSlider.setBlockIncrement(1);
+        numberOfDetectorsSlider.setBlockIncrement(10);
+        deltaAlphaSlider.setBlockIncrement(10);
 
         slidersPane.add(angleLabel, 0, 0);
         slidersPane.add(angleSlider, 1, 0);

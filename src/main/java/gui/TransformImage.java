@@ -37,8 +37,6 @@ public class TransformImage extends HBox{
     final private Slider numberOfDetectorsSlider = new Slider(10, 250, 100);
     final private Label numberOfDetectorsValue = new Label("100");
 
-
-
     final private VBox recreatedLayout = new VBox(8);
     final private Label recreatedLabel = new Label("Recreated image");
     final private ImageView recreatedView = new ImageView();
@@ -59,11 +57,11 @@ public class TransformImage extends HBox{
 
         sinogramView.setFitHeight(250);
         sinogramView.setFitWidth(250);
-        sinogramLayout.setAlignment(Pos.CENTER);
+        sinogramLayout.setAlignment(Pos.TOP_CENTER);
 
         recreatedView.setFitHeight(250);
         recreatedView.setFitWidth(250);
-        recreatedLayout.setAlignment(Pos.CENTER);
+        recreatedLayout.setAlignment(Pos.TOP_CENTER);
 
         sinogramLayout.getChildren().addAll(sinogramLabel, sinogramView, sinogramButton, slidersPane);
         recreatedLayout.getChildren().addAll(recreatedLabel, recreatedView, recreatedButton, choiceBox);
@@ -103,6 +101,7 @@ public class TransformImage extends HBox{
         slidersPane.add(deltaAlphaSlider, 1, 2);
         slidersPane.add(deltaAlphaValue, 2, 2);
 
+        choiceBox.getSelectionModel().selectFirst();
         choiceBox.getSelectionModel().selectedIndexProperty().addListener( (observable, val, new_val) -> {
             if(new_val.intValue() == 0){
                 // TODO: finalne

@@ -25,7 +25,7 @@ public class TransformImage extends HBox{
     final private GridPane slidersPane = new GridPane();
 
     final private Label angleLabel = new Label("Dead angle:");
-    final private Slider angleSlider = new Slider(5, 180, 90);
+    final private Slider angleSlider = new Slider(10, 180, 90);
     final private Label angleValue = new Label("90");
 
     final private Label deltaAlphaLabel = new Label("Delta alpha:");

@@ -211,7 +211,7 @@ public class Transform {
     }
 
 
-    public BufferedImage reconstructImage(boolean iter){
+    public BufferedImage reconstructImage(){
         reconstructed = new BufferedImage(xMax, yMax, BufferedImage.TYPE_BYTE_GRAY);
         int sinWidth = sinogram.getWidth();
         int sinHeight = sinogram.getHeight();

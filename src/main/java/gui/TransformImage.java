@@ -138,7 +138,7 @@ public class TransformImage extends HBox{
         if(sinogram == null){
             throw new NullPointerException("No sinogram to process"); // TODO: alert
         }
-        reconstructedImage = transform.reconstructImage(false);
+        reconstructedImage = transform.reconstructImage();
         Image image = SwingFXUtils.toFXImage(reconstructedImage, null);
         recreatedView.setImage(image);
         Double meanSquareError = transform.meanSquareError();

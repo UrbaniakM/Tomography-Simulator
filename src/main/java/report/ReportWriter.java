@@ -40,7 +40,7 @@ public class ReportWriter {
             for(int deadAngle = 60; deadAngle <= 360; deadAngle += 20){
                 transform.setStructureRange(deadAngle);
                 transform.generateSinogram();
-                transform.reconstructImage(false);
+                transform.reconstructImage();
                 double val = transform.meanSquareError();
                 resultsDeadAngle.add(new Result(deadAngle, val));
             }
@@ -49,7 +49,7 @@ public class ReportWriter {
             for(int numberOfDetectors = 10; numberOfDetectors <= 250; numberOfDetectors += 10){
                 transform.setNumberOfDetectors(numberOfDetectors);
                 transform.generateSinogram();
-                transform.reconstructImage(false);
+                transform.reconstructImage();
                 double val = transform.meanSquareError();
                 resultsNumberOfDetectors.add(new Result(numberOfDetectors, val));
             }
@@ -58,7 +58,7 @@ public class ReportWriter {
             for(int deltaAlpha = 2; deltaAlpha <= 45; deltaAlpha += 2){
                 transform.setDeltaAlpha(deltaAlpha);
                 transform.generateSinogram();
-                transform.reconstructImage(false);
+                transform.reconstructImage();
                 double val = transform.meanSquareError();
                 resultsDeltaAlpha.add(new Result(deltaAlpha, val));
             }

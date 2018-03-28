@@ -64,7 +64,7 @@ public class TransformImage extends HBox{
         recreatedLayout.setAlignment(Pos.TOP_CENTER);
 
         sinogramLayout.getChildren().addAll(sinogramLabel, sinogramView, sinogramButton, slidersPane);
-        recreatedLayout.getChildren().addAll(recreatedLabel, recreatedView, recreatedButton, choiceBox, meanSquareErrorLabel);
+        recreatedLayout.getChildren().addAll(recreatedLabel, recreatedView, recreatedButton, /*choiceBox,*/ meanSquareErrorLabel);
 
         sinogramButton.setOnMouseClicked(event -> {
             generateSinogram();
@@ -105,14 +105,14 @@ public class TransformImage extends HBox{
         slidersPane.add(deltaAlphaSlider, 1, 2);
         slidersPane.add(deltaAlphaValue, 2, 2);
 
-        choiceBox.getSelectionModel().selectFirst();
+        /*choiceBox.getSelectionModel().selectFirst();
         choiceBox.getSelectionModel().selectedIndexProperty().addListener( (observable, val, new_val) -> {
             if(new_val.intValue() == 0){
                 // TODO: finalne
             } else {
                 // TODO: iteracyjnie
             }
-        });
+        });*/
 
         recreatedButton.setOnMouseClicked(event -> {
             recreateImage();

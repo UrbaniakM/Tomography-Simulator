@@ -34,35 +34,35 @@ public class ReportWriter {
         final ArrayList<Result> resultsNumberOfDetectors = new ArrayList<>();
         final ArrayList<Result> resultsDeltaAlpha = new ArrayList<>();
 
-        transform.setNumberOfDetectors(100);
-        transform.setDeltaAlpha(2);
-        for(int deadAngle = 10; deadAngle <= 180; deadAngle += 10){
-            transform.setStructureRange(deadAngle);
-            transform.generateSinogram();
-            transform.reconstructImage();
-            double val = transform.meanSquareError();
-            resultsDeadAngle.add(new Result(deadAngle, val));
-        }
-
-
-        for(int numberOfDetectors = 10; numberOfDetectors <= 250; numberOfDetectors += 10){
-            transform.setNumberOfDetectors(numberOfDetectors);
-            transform.generateSinogram();
-            transform.reconstructImage();
-            double val = transform.meanSquareError();
-            resultsNumberOfDetectors.add(new Result(numberOfDetectors, val));
-        }
-
-        transform.setNumberOfDetectors(100);
-        for(int deltaAlpha = 2; deltaAlpha <= 45; deltaAlpha += 2){
-            transform.setDeltaAlpha(deltaAlpha);
-            transform.generateSinogram();
-            transform.reconstructImage();
-            double val = transform.meanSquareError();
-            resultsDeltaAlpha.add(new Result(deltaAlpha, val));
-        }
-
         try {
+            transform.setNumberOfDetectors(100);
+            transform.setDeltaAlpha(2);
+            for(int deadAngle = 60; deadAngle <= 360; deadAngle += 20){
+                transform.setStructureRange(deadAngle);
+                transform.generateSinogram();
+                transform.reconstructImage(false);
+                double val = transform.meanSquareError();
+                resultsDeadAngle.add(new Result(deadAngle, val));
+            }
+
+
+            for(int numberOfDetectors = 10; numberOfDetectors <= 250; numberOfDetectors += 10){
+                transform.setNumberOfDetectors(numberOfDetectors);
+                transform.generateSinogram();
+                transform.reconstructImage(false);
+                double val = transform.meanSquareError();
+                resultsNumberOfDetectors.add(new Result(numberOfDetectors, val));
+            }
+
+            transform.setNumberOfDetectors(100);
+            for(int deltaAlpha = 2; deltaAlpha <= 45; deltaAlpha += 2){
+                transform.setDeltaAlpha(deltaAlpha);
+                transform.generateSinogram();
+                transform.reconstructImage(false);
+                double val = transform.meanSquareError();
+                resultsDeltaAlpha.add(new Result(deltaAlpha, val));
+            }
+
             out.append("Dead angle");
             out.append(';');
             out.append("MSE");

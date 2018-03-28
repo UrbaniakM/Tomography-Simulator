@@ -25,7 +25,7 @@ public class TransformImage extends HBox{
     final private GridPane slidersPane = new GridPane();
 
     final private Label angleLabel = new Label("Dead angle:");
-    final private Slider angleSlider = new Slider(10, 180, 90);
+    final private Slider angleSlider = new Slider(10, 360, 90);
     final private Label angleValue = new Label("90");
 
     final private Label deltaAlphaLabel = new Label("Delta alpha:");
@@ -33,7 +33,7 @@ public class TransformImage extends HBox{
     final private Label deltaAlphaValue = new Label("2");
 
     final private Label numberOfDetectorsLabel = new Label("No. of detectors:");
-    final private Slider numberOfDetectorsSlider = new Slider(10, 300, 100);
+    final private Slider numberOfDetectorsSlider = new Slider(10, 250, 100);
     final private Label numberOfDetectorsValue = new Label("100");
 
     final private VBox recreatedLayout = new VBox(8);
@@ -138,7 +138,7 @@ public class TransformImage extends HBox{
         if(sinogram == null){
             throw new NullPointerException("No sinogram to process"); // TODO: alert
         }
-        reconstructedImage = transform.reconstructImage();
+        reconstructedImage = transform.reconstructImage(false);
         Image image = SwingFXUtils.toFXImage(reconstructedImage, null);
         recreatedView.setImage(image);
         Double meanSquareError = transform.meanSquareError();

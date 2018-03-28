@@ -1,7 +1,9 @@
 package computation;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.Raster;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -9,6 +11,8 @@ public class Transform {
     private BufferedImage image = null;
     private BufferedImage sinogram = null;
     private BufferedImage reconstructed = null;
+
+    //private BufferedImage
 
     private int numberOfDetectors = 30;
     private int structureRange = 90; // in degrees
@@ -206,7 +210,8 @@ public class Transform {
         return mask;
     }
 
-    public BufferedImage reconstructImage(){
+
+    public BufferedImage reconstructImage(boolean iter){
         reconstructed = new BufferedImage(xMax, yMax, BufferedImage.TYPE_BYTE_GRAY);
         int sinWidth = sinogram.getWidth();
         int sinHeight = sinogram.getHeight();
@@ -224,15 +229,13 @@ public class Transform {
                 }
             }
         }
-        double maxValue = 0;
         for(int x = 0; x < xMax; x++){
             for(int y = 0; y < yMax; y++){
                 values[x][y] /= occurences[x][y];
             }
         }
 
-
-
+        double maxValue = 0;
         for(int x = 0; x < xMax; x++){
             for(int y = 0; y < yMax; y++){
                 if(values[x][y] > maxValue) {
@@ -240,6 +243,7 @@ public class Transform {
                 }
             }
         }
+
         for (int x = 0; x < xMax; x++) {
             for (int y = 0; y < yMax; y++) {
                 values[x][y] /= maxValue;

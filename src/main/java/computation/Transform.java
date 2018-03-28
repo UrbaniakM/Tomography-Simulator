@@ -19,6 +19,8 @@ public class Transform {
     private int xMax;
     private int yMax;
 
+    private int maskSize = 44;
+
     private ArrayList<Point>[][] lines;
 
     private double meanSquareError;
@@ -116,10 +118,12 @@ public class Transform {
                 meanSquareError += Math.pow(inputImage.getSample(x,y,0) - reconstructedImage.getSample(x,y,0),2);
             }
         }
+        meanSquareError /=  255 * 255;
         meanSquareError /= xMax * yMax;
-        meanSquareError = Math.round(meanSquareError * 100.0) / 100.0;
+        meanSquareError = Math.round(meanSquareError * 10000.0) / 10000.0;
         return meanSquareError;
     }
+
 
     public BufferedImage generateSinogram(){
         int sinogramHeight = numberOfDetectors;
@@ -132,7 +136,7 @@ public class Transform {
             Point emiter = calculatePositionOnCircle(alpha);
             ArrayList<Double> valuesArray = new ArrayList<>();
             for(int detector = 0; detector < numberOfDetectors; detector++){
-                double beta = alpha + 180 - structureRange/2 + detector * (structureRange / (numberOfDetectors - 1));
+                double beta = alpha + 180 - structureRange/2 + (detector * structureRange / (numberOfDetectors - 1));
                 Point detectorPoint = calculatePositionOnCircle(beta);
                 ArrayList<Point> line = bresenhamLine(emiter, detectorPoint);
                 lines[detector][rayNum] = new ArrayList<>();
@@ -164,7 +168,42 @@ public class Transform {
             }
             rayNum++;
         }
+        double[] mask = getMask();
+        for (int height = 0; height < sinogramHeight; height++) {
+            for (int width = 0; width < sinogramWidth; width++) {
+                double sinogramVal = sinogram.getData().getSample(height, width, 0);
+                double[] newVal = new double[1];
+                newVal[0] = sinogramVal * mask[0];
+                for(int index = 1; index < maskSize; index++){
+                    if(width + index < sinogramWidth) {
+                        newVal[0] += sinogram.getData().getSample(height, width+index, 0) * mask[index];
+                    }
+                    if(width - index >= 0){
+                        newVal[0] += sinogram.getData().getSample(height, width-index, 0) * mask[index];
+                    }
+                }
+                if(newVal[0] < 0)
+                {
+                    newVal[0] = 0;
+                }
+                sinogram.getRaster().setPixel(height,width,newVal);
+            }
+        }
         return sinogram;
+    }
+
+    public double[] getMask() {
+        double[] mask = new double[maskSize];
+        mask[0] = 1.0;
+        double constVal = -4 / (Math.PI * Math.PI);
+        for (int i = 1; i < maskSize; i++) {
+            if( i % 2 == 0){
+                mask[i] = 0;
+            } else {
+                mask[i] = constVal / (double)(i*i);
+            }
+        }
+        return mask;
     }
 
     public BufferedImage reconstructImage(){
@@ -188,15 +227,22 @@ public class Transform {
         double maxValue = 0;
         for(int x = 0; x < xMax; x++){
             for(int y = 0; y < yMax; y++){
+                values[x][y] /= occurences[x][y];
+            }
+        }
+
+
+
+        for(int x = 0; x < xMax; x++){
+            for(int y = 0; y < yMax; y++){
                 if(values[x][y] > maxValue) {
                     maxValue = values[x][y];
                 }
             }
         }
-        for(int x = 0; x < xMax; x++){
-            for(int y = 0; y < yMax; y++){
+        for (int x = 0; x < xMax; x++) {
+            for (int y = 0; y < yMax; y++) {
                 values[x][y] /= maxValue;
-                //values[x][y] /= occurences[x][y];
                 double[] valWrite = new double[1];
                 valWrite[0] = values[x][y] * 255;
                 reconstructed.getRaster().setPixel(x,y,valWrite);

@@ -33,7 +33,7 @@ public class TransformImage extends HBox{
     final private Label deltaAlphaValue = new Label("2");
 
     final private Label numberOfDetectorsLabel = new Label("No. of detectors:");
-    final private Slider numberOfDetectorsSlider = new Slider(10, 250, 100);
+    final private Slider numberOfDetectorsSlider = new Slider(10, 300, 100);
     final private Label numberOfDetectorsValue = new Label("100");
 
     final private VBox recreatedLayout = new VBox(8);

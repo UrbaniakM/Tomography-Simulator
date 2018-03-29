@@ -29,7 +29,7 @@ public class TransformImage extends HBox{
     final private Label angleValue = new Label("90");
 
     final private Label deltaAlphaLabel = new Label("Delta alpha:");
-    final private Slider deltaAlphaSlider = new Slider(1, 45, 2);
+    final private Slider deltaAlphaSlider = new Slider(2, 45, 2);
     final private Label deltaAlphaValue = new Label("2");
 
     final private Label numberOfDetectorsLabel = new Label("No. of detectors:");
